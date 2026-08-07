@@ -1,0 +1,43 @@
+-- Esquema de la base de datos local de CineKMP (SQLDelight).
+-- A partir de este archivo, SQLDelight genera Kotlin type-safe: la clase CineDb y una
+-- función por cada etiqueta (selectAll, upsertMovie, ...). Los "?" o ":nombre" son parámetros.
+
+CREATE TABLE MovieEntity (
+    id INTEGER NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    overview TEXT NOT NULL,
+    rating REAL NOT NULL,
+    posterUrl TEXT,                       -- puede ser NULL (película sin póster)
+    year TEXT NOT NULL,
+    isFavorite INTEGER NOT NULL DEFAULT 0 -- 0 = no favorita, 1 = favorita (SQLite no tiene Boolean)
+);
+
+-- Todas las películas, mejor valoradas primero.
+selectAll:
+SELECT * FROM MovieEntity ORDER BY rating DESC;
+
+-- Una película por id (para la pantalla de detalle).
+selectById:
+SELECT * FROM MovieEntity WHERE id = ?;
+
+-- Solo las favoritas (pantalla Favoritas, Sesión 7).
+selectFavorites:
+SELECT * FROM MovieEntity WHERE isFavorite = 1 ORDER BY rating DESC;
+
+-- Guardar/actualizar películas SIN pisar el favorito, de forma compatible con SQLite viejo.
+-- Contexto: "INSERT OR REPLACE" borraría isFavorite al refrescar de la red, y el UPSERT
+-- (ON CONFLICT DO UPDATE) necesita SQLite 3.24+, que NO está en Android minSdk 24.
+-- Solución portable en 2 pasos dentro de una transacción (ver MovieLocalDataSource):
+--   1) insertIgnore → crea la fila solo si NO existe (isFavorite arranca en 0).
+--   2) updateData   → refresca los datos de la fila existente, sin tocar isFavorite.
+
+insertIgnore:
+INSERT OR IGNORE INTO MovieEntity(id, title, overview, rating, posterUrl, year, isFavorite)
+VALUES (?, ?, ?, ?, ?, ?, 0);
+
+updateData:
+UPDATE MovieEntity SET title = ?, overview = ?, rating = ?, posterUrl = ?, year = ? WHERE id = ?;
+
+-- Marcar/desmarcar favorito.
+setFavorite:
+UPDATE MovieEntity SET isFavorite = ? WHERE id = ?;

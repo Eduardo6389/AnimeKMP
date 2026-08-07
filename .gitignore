@@ -1,0 +1,82 @@
+###############################################################################
+# CineKMP — .gitignore para proyecto Kotlin Multiplatform (Android + iOS)
+###############################################################################
+
+# ─────────────────────────────── Gradle ────────────────────────────────────
+.gradle/
+**/build/
+!src/**/build/
+# ¡NO ignorar el wrapper! Debe versionarse para que ./gradlew funcione:
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+# ─────────────────────────────── Kotlin ────────────────────────────────────
+.kotlin/
+# Caché del toolchain de Kotlin/Native (si llegara a quedar dentro del repo)
+.konan/
+
+# ─────────────────────── Android / archivos de build ───────────────────────
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex
+output.json
+# Firmas / claves (NUNCA subir):
+*.keystore
+*.jks
+keystore.properties
+release/
+
+# ─────────────── Secretos y configuración local (API keys, etc.) ────────────
+# La API key de TMDB (Sesión 3) va en local.properties o en un .env, nunca en Git:
+*.env
+.env.*
+secrets.properties
+apikeys.properties
+
+# ─────────────────────── IntelliJ IDEA / Android Studio ─────────────────────
+.idea/
+*.iml
+*.ipr
+*.iws
+# (Opcional) si quisieras compartir configuración de ejecución del IDE, podrías
+# hacer negaciones como: !.idea/runConfigurations/
+
+# ─────────────────────────────── Xcode / iOS ───────────────────────────────
+xcuserdata/
+**/xcshareddata/WorkspaceSettings.xcsettings
+*.xcuserstate
+*.xcscmblueprint
+DerivedData/
+build/
+# Mantener versionados los archivos ESENCIALES del proyecto Xcode:
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+
+# CocoaPods (si algún día se usa)
+Pods/
+*.podspec.lock
+
+# Swift Package Manager
+.swiftpm/
+.build/
+
+# ─────────────────────────────── macOS ─────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# ─────────────────────────── Logs y temporales ─────────────────────────────
+*.log
+*.tmp
+*.bak
+*~
