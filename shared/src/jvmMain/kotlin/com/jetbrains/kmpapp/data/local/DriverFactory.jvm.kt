@@ -1,17 +1,14 @@
 package com.jetbrains.kmpapp.data.local
 
 import app.cash.sqldelight.db.SqlDriver
-import app.cash.sqldelight.driver.native.NativeSqliteDriver
+import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import com.jetbrains.kmpapp.db.AnimeDb
 
 actual class DriverFactory actual constructor(
     contexto: Any?,
 ) {
     actual fun createDriver(): SqlDriver =
-        NativeSqliteDriver(
-            schema = AnimeDb.Schema,
-            name = NOMBRE_DB,
-        )
+        JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY).also {
+            AnimeDb.Schema.create(it)
+        }
 }
-
-private const val NOMBRE_DB = "anime.db"

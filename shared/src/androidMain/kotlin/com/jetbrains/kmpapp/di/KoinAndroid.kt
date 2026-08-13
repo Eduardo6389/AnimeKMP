@@ -2,17 +2,17 @@ package com.jetbrains.kmpapp.di
 
 import android.content.Context
 import com.jetbrains.kmpapp.data.local.DriverFactory
-import com.jetbrains.kmpapp.db.CineDb
+import com.jetbrains.kmpapp.db.AnimeDb
+import com.jetbrains.kmpapp.platform.Conectividad
+import com.jetbrains.kmpapp.platform.crearConectividad
 import org.koin.dsl.module
 
-/**
- * Arranque de Koin en ANDROID. Se llama desde CineApp.onCreate(this).
- * El módulo de plataforma aporta el CineDb creado con el driver de Android (necesita Context).
- */
 fun initKoinAndroid(context: Context) {
     initKoin(
-        platformModule = module {
-            single { CineDb(DriverFactory(context).createDriver()) }
-        },
+        platformModule =
+            module {
+                single { AnimeDb(DriverFactory(context).createDriver()) }
+                single<Conectividad> { crearConectividad(context) }
+            },
     )
 }

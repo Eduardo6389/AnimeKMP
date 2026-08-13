@@ -1,0 +1,82 @@
+CREATE TABLE ItemEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    titulo TEXT NOT NULL,
+    subtitulo TEXT,
+    imagenUrl TEXT,
+    metrica REAL,
+    fecha TEXT,
+    tags TEXT NOT NULL,
+    esFavorito INTEGER NOT NULL DEFAULT 0,
+    descargadoEn INTEGER NOT NULL
+);
+
+CREATE TABLE DetalleEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    descripcion TEXT NOT NULL,
+    atributos TEXT NOT NULL
+);
+
+selectMetrica:
+SELECT * FROM ItemEntity
+ORDER BY metrica IS NULL, metrica DESC, titulo ASC;
+
+selectTitulo:
+SELECT * FROM ItemEntity
+ORDER BY titulo COLLATE NOCASE ASC;
+
+selectFecha:
+SELECT * FROM ItemEntity
+ORDER BY fecha IS NULL, fecha DESC, titulo ASC;
+
+selectFavoritos:
+SELECT * FROM ItemEntity
+WHERE esFavorito = 1
+ORDER BY metrica IS NULL, metrica DESC;
+
+selectById:
+SELECT * FROM ItemEntity WHERE id = ?;
+
+buscarLocal:
+SELECT * FROM ItemEntity
+WHERE titulo LIKE '%' || :query || '%'
+ORDER BY metrica IS NULL, metrica DESC;
+
+insertIgnore:
+INSERT OR IGNORE INTO ItemEntity(
+    id, titulo, subtitulo, imagenUrl, metrica, fecha, tags, esFavorito, descargadoEn
+) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?);
+
+updateData:
+UPDATE ItemEntity SET
+    titulo = ?,
+    subtitulo = ?,
+    imagenUrl = ?,
+    metrica = ?,
+    fecha = ?,
+    tags = ?,
+    descargadoEn = ?
+WHERE id = ?;
+
+setFavorito:
+UPDATE ItemEntity SET esFavorito = ? WHERE id = ?;
+
+ultimoTimestamp:
+SELECT descargadoEn FROM ItemEntity
+ORDER BY descargadoEn DESC
+LIMIT 1;
+
+upsertDetalle:
+INSERT OR REPLACE INTO DetalleEntity(id, descripcion, atributos)
+VALUES (?, ?, ?);
+
+selectDetalle:
+SELECT * FROM DetalleEntity WHERE id = ?;
+
+deleteDetallesNoFavoritos:
+DELETE FROM DetalleEntity
+WHERE id NOT IN (
+    SELECT id FROM ItemEntity WHERE esFavorito = 1
+);
+
+deleteCache:
+DELETE FROM ItemEntity WHERE esFavorito = 0;
