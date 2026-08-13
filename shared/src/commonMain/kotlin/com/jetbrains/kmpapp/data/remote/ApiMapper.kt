@@ -8,26 +8,31 @@ import com.jetbrains.kmpapp.domain.model.ItemDetalle
 fun AnimeDto.toItem(): Item =
     Item(
         id = id.toString(),
-        titulo = title,
-        subtitulo = year?.toString(),
-        imagenUrl = images?.jpg?.imageUrl,
-        metrica = score,
-        fecha = year?.toString(),
-        tags = genres.take(5).map { it.name },
+        titulo = titulo,
+        subtitulo = tipo,
+        imagenUrl = imagenes?.jpg?.imagenUrl,
+        metrica = puntuacion,
+        fecha = anio?.toString(),
+        tags = generos.take(MAX_TAGS).map { it.nombre },
     )
 
 fun AnimeDto.toDetalle(): ItemDetalle =
     ItemDetalle(
-        item = toItem(),
-        descripcion = synopsis.orEmpty(),
-        atributos = listOf(
-            Atributo("Puntuación", score?.toString() ?: "Sin dato"),
-            Atributo("Año", year?.toString() ?: "Sin dato"),
-            Atributo(
-                "Géneros",
-                genres.joinToString { it.name }.ifEmpty { "Sin dato" },
+        item =
+            toItem().copy(
+                imagenUrl = imagenes?.jpg?.imagenGrandeUrl ?: imagenes?.jpg?.imagenUrl,
             ),
-            Atributo("ID MyAnimeList", id.toString()),
-        ),
+        descripcion = sinopsis.orEmpty(),
+        atributos =
+            listOf(
+                Atributo("Tipo", tipo ?: SIN_DATO),
+                Atributo("Episodios", episodios?.toString() ?: SIN_DATO),
+                Atributo("Estado", estado ?: SIN_DATO),
+                Atributo("Duración", duracion ?: SIN_DATO),
+                Atributo("Clasificación", clasificacion ?: SIN_DATO),
+            ),
         relacionados = emptyList(),
     )
+
+private const val MAX_TAGS = 5
+private const val SIN_DATO = "Sin dato"
