@@ -1,0 +1,15 @@
+complexity:
+  LongMethod:
+    allowedLines: 20
+  LongParameterList:
+    allowedFunctionParameters: 3
+    allowedConstructorParameters: 3
+    ignoreDataClasses: true
+  TooManyFunctions:
+    allowedFunctionsPerFile: 25
+    allowedFunctionsPerClass: 20
+
+naming:
+  FunctionNaming:
+    ignoreAnnotated:
+      - Composable

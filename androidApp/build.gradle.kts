@@ -3,38 +3,58 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.detekt)
 }
 
 dependencies {
     implementation(projects.shared)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.compose.uiToolingPreview)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.ktor)
     implementation(libs.compose.foundation)
-    implementation(libs.ktor.client.okhttp)
     implementation(libs.compose.material3)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.uiToolingPreview)
+    implementation(libs.koin.compose.viewmodel)
+    implementation(libs.navigation.compose)
+
+    debugImplementation(libs.compose.uiTooling)
 }
 
 android {
     namespace = "com.jetbrains.kmpapp"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk =
+        libs.versions.android.compileSdk
+            .get()
+            .toInt()
 
     defaultConfig {
         applicationId = "com.jetbrains.kmpapp"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
+        targetSdk =
+            libs.versions.android.targetSdk
+                .get()
+                .toInt()
         versionCode = 1
         versionName = "1.0"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -45,4 +65,9 @@ kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.JVM_11
     }
+}
+
+detekt {
+    config.setFrom(rootProject.file("detekt.yml"))
+    buildUponDefaultConfig = true
 }
